@@ -1,6 +1,8 @@
 ## Getting Started
 
-First, we'll set up a virtual environment. 
+1. Clone this repository and navigate to it in your terminal. 
+
+2. Set up a virtual environment with SimpleITK installed. 
 
 ```
 # Create and activate a conda environment 
@@ -11,7 +13,7 @@ conda activate exm-toolbox'
 %conda install -c https://conda.anaconda.org/simpleitk SimpleITK
 ```
 
-Next, we'll install SimpleElastix. SimpleElastix provides a simplified, universal, and efficient way of registering two volumes/slices.
+3. Install SimpleElastix. SimpleElastix provides a simplified, universal, and efficient way of registering two volumes/slices and builds on SimpleITK.
 
 ```
 # Install SimpleElastix
@@ -38,4 +40,4 @@ Next, we'll install SimpleElastix. SimpleElastix provides a simplified, universa
 
 ```
 
-Finally, launch Jupyter notebooks by running `jupyter notebook`. You could see an .ipynb file called 'tutorial'. 
+4. Launch Jupyter notebooks by running `jupyter notebook`. Open the .ipynb file called 'tutorial'. 
