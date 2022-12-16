@@ -6,3 +6,4 @@ cv2
 os
 ipywidgets
 argparse
+notebook
