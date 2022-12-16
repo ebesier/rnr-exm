@@ -13,7 +13,7 @@ conda activate exm-toolbox'
 %conda install -c https://conda.anaconda.org/simpleitk SimpleITK
 ```
 
-3. Install SimpleElastix. SimpleElastix provides a simplified, universal, and efficient way of registering two volumes/slices and builds on SimpleITK.
+3. Install SimpleElastix. SimpleElastix provides a simplified, universal, and efficient way of registering two volumes/slices. SimpleElastix builds on SimpleITK.
 
 ```
 # Install SimpleElastix
