@@ -78,10 +78,10 @@ def non_rigid_deformation(input_path,num_of_parallel_porcesses,gaussian_sigma):
   noise = np.concatenate(filtered_chunks, axis=0)
   noise = torch.tensor(noise)
 
-  weight = 27
-  weighted_noise = torch.mul(noise, weight)
+  weight = 27 # Vary this number to get different degree of noise
+  weighted_noise = torch.mul(noise, weight) # Deformation field (offset vectors)
 
-  grid = torch.add(grid_basic, weighted_noise) # Vary this number to get different degree of noise
+  grid = torch.add(grid_basic, weighted_noise)  # Direct voxel coordinates
   grid = torch.unsqueeze(grid,dim = 0)
 
   # ---- Apply the transformation -------------
