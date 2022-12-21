@@ -60,7 +60,7 @@ def non_rigid_deformation(input_path,num_of_parallel_porcesses,gaussian_sigma):
   z, x, y = torch.meshgrid(zs, xs, ys, indexing = 'ij')
   grid_basic = torch.stack((y,x,z),dim=-1)
 
-  N = 76 * Z_in
+  N = 76 * Z_in # The number of local deformations. Can be varied
   anchor_points = np.stack((np.random.randint(0, high=Z_in, size=N),np.random.randint(0 + 145, high= H_in - 145, size=N),np.random.randint(0 + 145, high= W_in - 145, size=N),np.random.randint(40, high=100, size=N)), axis = 1)
 
   noise = np.zeros_like(grid_basic)
@@ -79,7 +79,7 @@ def non_rigid_deformation(input_path,num_of_parallel_porcesses,gaussian_sigma):
   noise = torch.tensor(noise)
 
   weight = 27 # Vary this number to get different degree of noise
-  weighted_noise = torch.mul(noise, weight) # Deformation field (offset vectors)
+  weighted_noise = torch.mul(noise, weight) # Deformation field (offset vectors). This is what will be used for assessment 
 
   grid = torch.add(grid_basic, weighted_noise)  # Direct voxel coordinates
   grid = torch.unsqueeze(grid,dim = 0)
