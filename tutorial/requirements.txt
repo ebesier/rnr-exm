@@ -2,8 +2,8 @@ h5py
 numpy
 matplotlib
 yacs
-cv2
-os
+opencv-python
 ipywidgets
 argparse
 notebook
+jupyter

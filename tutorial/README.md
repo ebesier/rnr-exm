@@ -32,11 +32,11 @@ conda activate exm-toolbox'
 !python Packaging/setup.py install
 
 # Install ExM package
-%pip install -r requirements.txt --editable .
+%pip install -r requirements.txt 
 
 # Install ipywidgets
 # Interact method will be used for visualizing volume slices
-%conda install -c conda-forge ipywidgets=7.6. 0
+%conda install -c conda-forge ipywidgets=7.6.0
 
 ```
 
