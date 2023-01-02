@@ -16,6 +16,7 @@ conda activate exm-toolbox'
 3. Install SimpleElastix. SimpleElastix provides a simplified, universal, and efficient way of registering two volumes/slices. SimpleElastix builds on SimpleITK.
 
 ```
+
 # Install SimpleElastix
 
 # May need install the higher version of Cmake
@@ -31,7 +32,10 @@ conda activate exm-toolbox'
 !cd SimpleITK-build/Wrapping/Python
 !python Packaging/setup.py install
 
-# Install ExM package
+# Add path of SITK python wrappings to the `.bashrc` file
+export PYTHONPATH=$(pwd)
+
+# Install ExM package 
 %pip install -r requirements.txt 
 
 # Install ipywidgets
