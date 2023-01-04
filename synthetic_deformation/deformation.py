@@ -38,7 +38,7 @@ def apply_gaussian_filter(sigma, volume):
   return gaussian_filter(volume, sigma, mode='reflect', cval=0)
 
 
-def non_rigid_deformation(input_path,num_of_parallel_porcesses,gaussian_sigma):
+def non_rigid_deformation(input_path,num_of_parallel_porcesses, num_local_deformations, noise_level, gaussian_sigma):
 
   fixed_vol, vol_to_align = readH5(input_path)
 
@@ -60,8 +60,10 @@ def non_rigid_deformation(input_path,num_of_parallel_porcesses,gaussian_sigma):
   z, x, y = torch.meshgrid(zs, xs, ys, indexing = 'ij')
   grid_basic = torch.stack((y,x,z),dim=-1)
 
-  N = 76 * Z_in # The number of local deformations. Can be varied
-  anchor_points = np.stack((np.random.randint(0, high=Z_in, size=N),np.random.randint(0 + 145, high= H_in - 145, size=N),np.random.randint(0 + 145, high= W_in - 145, size=N),np.random.randint(40, high=100, size=N)), axis = 1)
+  N = num_local_deformations
+    
+  # + 120 and - 120 ensures anchor points are not on border
+  anchor_points = np.stack((np.random.randint(0, high=Z_in, size=N),np.random.randint(0 + 120, high= H_in - 120, size=N),np.random.randint(0 + 120, high= W_in - 120, size=N),np.random.randint(50, high=100, size=N)), axis = 1)
 
   noise = np.zeros_like(grid_basic)
   for z,x,y,intensity in anchor_points:
@@ -78,28 +80,14 @@ def non_rigid_deformation(input_path,num_of_parallel_porcesses,gaussian_sigma):
   noise = np.concatenate(filtered_chunks, axis=0)
   noise = torch.tensor(noise)
 
-  weight = 27 # Vary this number to get different degree of noise
-  weighted_noise = torch.mul(noise, weight) # Deformation field (offset vectors). This is what will be used for assessment 
+  weight = noise_level
+  weighted_noise = torch.mul(noise, weight)
 
-  grid = torch.add(grid_basic, weighted_noise)  # Direct voxel coordinates
+  grid = torch.add(grid_basic, weighted_noise) # Vary this number to get different degree of noise
   grid = torch.unsqueeze(grid,dim = 0)
 
   # ---- Apply the transformation -------------
   output= F.grid_sample(input, grid, align_corners=True)
   print('output shape', output.shape)
     
-  return output
-
-
-if __name__ == '__main__':
-	# set the start method
-    mp.set_start_method('forkserver')
-    parser=argparse.ArgumentParser(description='synthetic deformations Generator')
-    parser.add_argument("-i","--input_path", dest="input_path", help="path to input pair volumes",required=True, default="pair")
-    parser.add_argument("-n","--num_of_parallel_porcesses", dest="num_of_parallel_porcesses", help="num of parallel porcesses to accelerate on",type=int, default=8,required=True)
-    parser.add_argument("-s","--sigma", dest="gaussian_sigma", help="sigma value for gaussian filter",type=int, default=1)
-    args= parser.parse_args()
-
-    deformation(args.input_path,args.num_of_parallel_porcesses,args.gaussian_sigma)
-
-
+  return weighted_noise, output
