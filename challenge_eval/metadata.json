@@ -2,18 +2,30 @@
     "zebrafish": {
         "zebrafish_pair4": {
             "runtime (seconds)": 0,
+            "machine name": None,
+            "number of cores used": 0, 
+            "number of GPUs used": 0,
+            "Ghz that each processing unit supports": {'core': '0 Ghz', 'GPU': '0 Ghz'},
             "model summary": "brief explanation of model"
         }
     },
     "mouse": {
         "mouse_pair4": {
             "runtime (seconds)": 0,
+            "machine name": None,
+            "number of cores used": 0, 
+            "number of GPUs used": 0,
+            "Ghz that each processing unit supports": {'core': '0 Ghz', 'GPU': '0 Ghz'},
             "model summary": "brief explanation of model"
         }
     },
     "c_elegan": {
         "c_elegan_pair4": {
             "runtime (seconds)": 0,
+            "machine name": None,
+            "number of cores used": 0, 
+            "number of GPUs used": 0,
+            "Ghz that each processing unit supports": {'core': '0 Ghz', 'GPU': '0 Ghz'},
             "model summary": "brief explanation of model"
         }
     }
