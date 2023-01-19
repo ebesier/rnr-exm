@@ -2,7 +2,7 @@
     "zebrafish": {
         "zebrafish_pair4": {
             "runtime (seconds)": 0,
-            "machine name": None,
+            "machine name": 'enter machine name such as macOS',
             "number of cores used": 0, 
             "number of GPUs used": 0,
             "Ghz that each processing unit supports": {'core': '0 Ghz', 'GPU': '0 Ghz'},
@@ -12,7 +12,7 @@
     "mouse": {
         "mouse_pair4": {
             "runtime (seconds)": 0,
-            "machine name": None,
+            "machine name": 'enter machine name such as macOS',
             "number of cores used": 0, 
             "number of GPUs used": 0,
             "Ghz that each processing unit supports": {'core': '0 Ghz', 'GPU': '0 Ghz'},
@@ -22,7 +22,7 @@
     "c_elegan": {
         "c_elegan_pair4": {
             "runtime (seconds)": 0,
-            "machine name": None,
+            "machine name": 'enter machine name such as macOS',
             "number of cores used": 0, 
             "number of GPUs used": 0,
             "Ghz that each processing unit supports": {'core': '0 Ghz', 'GPU': '0 Ghz'},
