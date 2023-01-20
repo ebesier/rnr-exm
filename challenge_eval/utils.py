@@ -1,21 +1,8 @@
 import numpy as np
 import scipy.ndimage
-import SimpleITK as sitk
 from evalutils.exceptions import ValidationError
 from scipy.ndimage import map_coordinates
 from mertics import *
-
-## ITK conversion ###
-
-def convertSitkImage(vol_np, res_np = None):
-    ''' convert numpy array to sitk vol
-    '''
-    vol = sitk.GetImageFromArray(vol_np)
-    if res_np is not None:
-        vol.SetSpacing(res_np)
-    else:
-        vol.SetSpacing([1.625,1.625,4.0])
-    return vol
 
 ##### metrics #####
 def jacobian_determinant(disp):
