@@ -1,5 +1,4 @@
 pandas
 h5py
 scipy
-SimpleITK
 evalutils

@@ -1,12 +1,9 @@
 import json
 import os.path
-from pathlib import Path
-import SimpleITK as sitk
 import pandas
 import argparse
 import numpy as np
 import h5py
-import time
 
 from utils import *
 import os
@@ -18,6 +15,7 @@ def evaluate_ExM(INPUT_PATH,GT_PATH,JSON_PATH,OUTPUT_PATH,SAMPLING_FACTOR, verbo
         data = json.load(f)
 
     name=data['task_name']
+    dataset = data['dataset']
     expected_shape=np.array(data['expected_shape'])
     evaluation_methods_metrics=[tmp['metric'] for tmp in data['evaluation_methods']]
     log_j = []
@@ -28,13 +26,17 @@ def evaluate_ExM(INPUT_PATH,GT_PATH,JSON_PATH,OUTPUT_PATH,SAMPLING_FACTOR, verbo
     #Check if all participants files are complete beforehand
 
     for idx, pair in enumerate(eval_pairs):
-        disp_name='disp_{}'.format(os.path.basename(pair))
+        # disp_name='disp_{}'.format(os.path.basename(pair))
+        disp_name='{}_{}.h5'.format(name,dataset)
         disp_path=os.path.join(INPUT_PATH, disp_name)  
-        if os.path.isfile(disp_path):
+        with h5py.File(disp_path, "r") as f:
+            pair_list = list(f.keys())
+        if pair in pair_list:
             continue
+        
         else:
-            print("{} is missing".format(disp_name))
-            missing_disp.append(disp_name[5:])
+            print("{},{} is missing".format(name,pair))
+            missing_disp.append(pair)
             # raise_missing_file_error(disp_name) 
 
     #Dataframe for Case results
@@ -47,17 +49,17 @@ def evaluate_ExM(INPUT_PATH,GT_PATH,JSON_PATH,OUTPUT_PATH,SAMPLING_FACTOR, verbo
     for idx, pair in enumerate(eval_pairs):
         case_results={}
 
-        volumes_pair_path=os.path.join(GT_PATH,pair)
+        volumes_pair_path=os.path.join(GT_PATH,"{}_{}_segmentation.h5".format(name,pair))
         with h5py.File(volumes_pair_path, "r") as f:
-            fixed_seg = f['fixed_segmentation_map'][()]
-            moving_seg = f['move_segmentation_map'][()]
+            fixed_seg = f['fixed'][()]
+            moving_seg = f['move'][()]
 
         if os.path.basename(pair) in missing_disp:
             disp_field = np.zeros(expected_shape)
         else:
-            disp_path=os.path.join(INPUT_PATH, 'disp_{}'.format(os.path.basename(pair)))
+            disp_path=os.path.join(INPUT_PATH, '{}_{}.h5'.format(name,dataset))
             with h5py.File(disp_path, "r") as f:
-                disp_field=f['sample_deformation'][()]
+                disp_field=f[pair][()]
 
             shape = np.array(disp_field.shape)
             if not np.all(shape==expected_shape):
@@ -66,14 +68,11 @@ def evaluate_ExM(INPUT_PATH,GT_PATH,JSON_PATH,OUTPUT_PATH,SAMPLING_FACTOR, verbo
         if SAMPLING_FACTOR != 1.0:
             fixed_seg = ndimage.zoom(fixed_seg, SAMPLING_FACTOR, order= 0)
             moving_seg = ndimage.zoom(moving_seg, SAMPLING_FACTOR, order= 0)
-            disp_field = ndimage.zoom(disp_field, (SAMPLING_FACTOR,SAMPLING_FACTOR,SAMPLING_FACTOR,1), order= 1 )
+            disp_field = ndimage.zoom(disp_field, (SAMPLING_FACTOR,SAMPLING_FACTOR,SAMPLING_FACTOR,1), order= 1)
 
-        if os.path.basename(pair) in missing_disp:
-            warped_seg = moving_seg
-        else: 
-            D,H,W = fixed_seg.shape
-            identity = np.meshgrid(np.arange(D), np.arange(H), np.arange(W), indexing='ij')
-            warped_seg = map_coordinates(moving_seg, identity + disp_field.transpose(3,0,1,2), order=0)
+        D,H,W = fixed_seg.shape
+        identity = np.meshgrid(np.arange(D), np.arange(H), np.arange(W), indexing='ij')
+        warped_seg = map_coordinates(moving_seg, identity + disp_field.transpose(3,0,1,2), order=0)
 
         ## Get the volume labels 
         labels = list(np.unique(fixed_seg))
@@ -142,7 +141,7 @@ def evaluate_ExM(INPUT_PATH,GT_PATH,JSON_PATH,OUTPUT_PATH,SAMPLING_FACTOR, verbo
     with open(os.path.join(OUTPUT_PATH,metrics_file_name), 'w') as f:
         json.dump(final_results, f, indent=4)
 
-    with open(os.path.join(OUTPUT_PATH,'missing_deformation.json'), 'w') as f:
+    with open(os.path.join(OUTPUT_PATH,'{}_missing_deformation.json'.format(name)), 'w') as f:
         json.dump(missing_files, f, indent=4)
 
     np.save(os.path.join(OUTPUT_PATH,'{}_sdlogj.npy'.format(name)),np.array(log_j))
@@ -155,7 +154,7 @@ if __name__=="__main__":
     parser=argparse.ArgumentParser(description='RnR-ExM Evaluation script')
 
     parser.add_argument("-i","--input", dest="input_path", help="path to deformation fields", default="RnR-ExM",required=True)
-    parser.add_argument("-d","--data", dest="gt_path", help="path to dataset", default="dataset")
+    parser.add_argument("-d","--data", dest="gt_path", help="path to segmentation volumes", default="dataset")
     parser.add_argument("-o","--output", dest="output_path", help="path to write results(e.g. 'results/metrics.json')", default="metrics.json")
     parser.add_argument("-c","--config", dest="config_path", help="path to config json-File (e.g. '{ Task }_evaluation_config.json')", default='ground-truth/evaluation_config.json') 
     parser.add_argument("-s","--sampling_factor", dest="sampling_factor",help="downsample the segmentation map for faster evaluation",type=float, default=1)

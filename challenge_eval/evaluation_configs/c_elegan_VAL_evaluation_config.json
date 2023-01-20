@@ -1,0 +1,28 @@
+{
+    "task_name": "c_elegan",
+    "dataset":"val",
+    "eval_config_version": 0.1,
+    "evaluation_methods": [
+        {
+            "name": "LogJacDetStd",
+            "metric": "sdlogj"
+        },
+        {
+            "name": "DSC",
+            "metric": "dice"
+        },
+        {
+            "name": "HD95",
+            "metric": "hd95"
+        }
+    ],
+    "expected_shape": [
+        580,
+        2048,
+        2048,
+        3
+    ],
+    "eval_pairs": [
+        "pair4"
+    ]
+}
