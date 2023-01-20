@@ -67,3 +67,13 @@ python evlatiation.py \
 }
 ```
 
+## Notes
+* Evaluation can take a long time and consume large memory depending on the size of the dataset. It is advisable to start from downsampled evaluation as shown above, with --sampling_factor 0.5 argument (1/2 downsampling). As an example, c_elegan_pair4 dataset having 580 Z-slices takes around ten minutes and uses 80 GB of RAM with a sampling factor of 0.5. Datasets with fewer Z-slices (mouse_pair4 and zebrafish_pair4) run faster (few minutes) with smaller RAM usage (10-20 GB). Without downsampling, the runtime and memory usage will be 8 times larger.
+
+* Downsampled evaluation is a proxy for full-resolution evaluation.
+  * DSC score will be similar with/without downsampling as it is an area ratio
+  * HD95 will be roughly halved if evaluated with 1/2 downsampling as it is a distance-based metric
+  * SDlogJ (indicated by LogJacDetStd in the output) tends to be larger when downsampled, although the relationship with the full-resolution counterpart is not trivial
+  * num_foldings can be ignored (always 0)
+
+* In the output json file, the "aggregates" entry shows the 30th percentile, mean, and standard deviation of all the "case" entries. In the validation phase, each animal species has one dataset, so these aggregate scores can be disregarded. They are the same as the "case" scores and the standard deviation is undefined (NaN).
