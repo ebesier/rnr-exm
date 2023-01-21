@@ -54,9 +54,6 @@ python evlatiation.py \
         "LogJacDetStd": {
             "0": 1.260214952323843e-07
         },
-        "num_foldings": {
-            "0": 0.0
-        },
         "DSC": {
             "0": 1.5458373911564852e-06
         },
