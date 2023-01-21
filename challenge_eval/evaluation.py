@@ -89,7 +89,6 @@ def evaluate_ExM(INPUT_PATH,GT_PATH,JSON_PATH,OUTPUT_PATH,SAMPLING_FACTOR, verbo
                 sd_log_j = log_jac_det.std()
                 case_results[_name]= sd_log_j
                 log_j.append(sd_log_j)
-                case_results['num_foldings']=(jac_det <= 0).astype(float).sum()
 
 
             ### DSC
