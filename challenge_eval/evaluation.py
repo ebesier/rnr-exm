@@ -69,6 +69,8 @@ def evaluate_ExM(INPUT_PATH,GT_PATH,JSON_PATH,OUTPUT_PATH,SAMPLING_FACTOR, verbo
             fixed_seg = ndimage.zoom(fixed_seg, SAMPLING_FACTOR, order= 0)
             moving_seg = ndimage.zoom(moving_seg, SAMPLING_FACTOR, order= 0)
             disp_field = ndimage.zoom(disp_field, (SAMPLING_FACTOR,SAMPLING_FACTOR,SAMPLING_FACTOR,1), order= 1)
+            # BUG FIX, GREG FLEISHMAN
+            disp_field *= SAMPLING_FACTOR
 
         D,H,W = fixed_seg.shape
         identity = np.meshgrid(np.arange(D), np.arange(H), np.arange(W), indexing='ij')
