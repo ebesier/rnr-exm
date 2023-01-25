@@ -38,7 +38,7 @@ Note: The `evaluation_configs` directory contains evaluation configuration files
 - Example to evaluate zebrafish alignment, Run:
 
 ```
-python evlatiation.py \
+python evaluation.py \
 --input /insert_working_directory/submission/ \
 --data /insert_working_directory/dataset/ \
 --output /insert_working_directory/results/ \
