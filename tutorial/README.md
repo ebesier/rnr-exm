@@ -44,4 +44,4 @@ export PYTHONPATH=$(pwd)
 
 ```
 
-4. Launch Jupyter notebooks by running `jupyter notebook`. Open the .ipynb file called 'tutorial'. 
+4. Launch Jupyter notebooks by running `jupyter notebook`. Open the .ipynb file called 'baseline_tutorial'. 
