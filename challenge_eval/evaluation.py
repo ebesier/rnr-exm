@@ -54,27 +54,20 @@ def evaluate_ExM(INPUT_PATH,GT_PATH,JSON_PATH,OUTPUT_PATH,SAMPLING_FACTOR, verbo
             fixed_seg = f['fixed'][()]
             moving_seg = f['move'][()]
 
-        if os.path.basename(pair) in missing_disp:
-            disp_field = np.zeros(expected_shape)
-        else:
             disp_path=os.path.join(INPUT_PATH, '{}_{}.h5'.format(name,dataset))
-            with h5py.File(disp_path, "r") as f:
-                disp_field=f[pair][()]
+            warped_seg = np.empty_like(fixed_seg)
 
-            shape = np.array(disp_field.shape)
-            if not np.all(shape==expected_shape):
-                raise_shape_error(disp_name, shape, expected_shape)
-
-        if SAMPLING_FACTOR != 1.0:
-            fixed_seg = ndimage.zoom(fixed_seg, SAMPLING_FACTOR, order= 0)
-            moving_seg = ndimage.zoom(moving_seg, SAMPLING_FACTOR, order= 0)
-            disp_field = ndimage.zoom(disp_field, (SAMPLING_FACTOR,SAMPLING_FACTOR,SAMPLING_FACTOR,1), order= 1)
-            # BUG FIX, GREG FLEISHMAN
-            disp_field *= SAMPLING_FACTOR
-
-        D,H,W = fixed_seg.shape
-        identity = np.meshgrid(np.arange(D), np.arange(H), np.arange(W), indexing='ij')
-        warped_seg = map_coordinates(moving_seg, identity + disp_field.transpose(3,0,1,2), order=0)
+            for slice,chunk in enumerate(list(range(0, fixed_seg.shape[0]*int(1/SAMPLING_FACTOR), int(1/SAMPLING_FACTOR)))):
+    
+                with h5py.File('/home/mansour/rnr-exm/challenge_eval/submission/zebrafish_val.h5', "r") as f:
+                    deformation = f['pair4'][chunk:chunk+2,:,:,:]
+                deformation = ndimage.zoom(deformation, (SAMPLING_FACTOR,SAMPLING_FACTOR,SAMPLING_FACTOR,1), order= 1)
+                deformation *= SAMPLING_FACTOR
+                
+                D,H,W,C = deformation.shape
+                identity = np.meshgrid(np.ones(D)*slice, np.arange(H), np.arange(W), indexing='ij')
+                coord = identity + deformation.transpose(3,0,1,2)
+                warped_seg[slice] = map_coordinates(moving_seg, coord, order=0)
 
         ## Get the volume labels 
         labels = list(np.unique(fixed_seg))
