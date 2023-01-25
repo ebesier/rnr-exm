@@ -8,8 +8,7 @@ import h5py
 from utils import *
 import os
 
-def evaluate_ExM(INPUT_PATH,GT_PATH,JSON_PATH,OUTPUT_PATH,SAMPLING_FACTOR, verbose=False):
-# def evaluate_ExM(INPUT_PATH,verbose=False):
+def evaluate_ExM(INPUT_PATH,GT_PATH,JSON_PATH,OUTPUT_PATH,SAMPLING_FACTOR,memory_optimized, verbose=False):
     
     with open(JSON_PATH, 'r') as f:
         data = json.load(f)
@@ -26,7 +25,6 @@ def evaluate_ExM(INPUT_PATH,GT_PATH,JSON_PATH,OUTPUT_PATH,SAMPLING_FACTOR, verbo
     #Check if all participants files are complete beforehand
 
     for idx, pair in enumerate(eval_pairs):
-        # disp_name='disp_{}'.format(os.path.basename(pair))
         disp_name='{}_{}.h5'.format(name,dataset)
         disp_path=os.path.join(INPUT_PATH, disp_name)  
         with h5py.File(disp_path, "r") as f:
@@ -37,7 +35,6 @@ def evaluate_ExM(INPUT_PATH,GT_PATH,JSON_PATH,OUTPUT_PATH,SAMPLING_FACTOR, verbo
         else:
             print("{},{} is missing".format(name,pair))
             missing_disp.append(pair)
-            # raise_missing_file_error(disp_name) 
 
     #Dataframe for Case results
 
@@ -54,20 +51,35 @@ def evaluate_ExM(INPUT_PATH,GT_PATH,JSON_PATH,OUTPUT_PATH,SAMPLING_FACTOR, verbo
             fixed_seg = f['fixed'][()]
             moving_seg = f['move'][()]
 
-            disp_path=os.path.join(INPUT_PATH, '{}_{}.h5'.format(name,dataset))
-            warped_seg = np.empty_like(fixed_seg)
+        if os.path.basename(pair) in missing_disp:
+            disp_field = np.zeros((fixed_seg[0],fixed_seg[1],fixed_seg[2],3))
+            D,H,W,C = disp_field.shape
+            identity = np.meshgrid(np.arange(D), np.arange(H), np.arange(W), indexing='ij')
+            warped_seg = map_coordinates(moving_seg, identity + disp_field.transpose(3,0,1,2), order=0)
+        else:
 
-            for slice,chunk in enumerate(list(range(0, fixed_seg.shape[0]*int(1/SAMPLING_FACTOR), int(1/SAMPLING_FACTOR)))):
-    
-                with h5py.File('/home/mansour/rnr-exm/challenge_eval/submission/zebrafish_val.h5', "r") as f:
-                    deformation = f['pair4'][chunk:chunk+2,:,:,:]
-                deformation = ndimage.zoom(deformation, (SAMPLING_FACTOR,SAMPLING_FACTOR,SAMPLING_FACTOR,1), order= 1)
-                deformation *= SAMPLING_FACTOR
-                
-                D,H,W,C = deformation.shape
-                identity = np.meshgrid(np.ones(D)*slice, np.arange(H), np.arange(W), indexing='ij')
-                coord = identity + deformation.transpose(3,0,1,2)
-                warped_seg[slice] = map_coordinates(moving_seg, coord, order=0)
+            disp_path=os.path.join(INPUT_PATH, '{}_{}.h5'.format(name,dataset))
+            if memory_optimized == True:
+                warped_seg = np.empty_like(fixed_seg)
+                for slice,chunk in enumerate(list(range(0, fixed_seg.shape[0]*int(1/SAMPLING_FACTOR), int(1/SAMPLING_FACTOR)))):
+                    with h5py.File(disp_path, "r") as f:
+                        disp_field = f[pair][chunk:chunk+int(1/SAMPLING_FACTOR),:,:,:]
+                    disp_field = ndimage.zoom(disp_field, (SAMPLING_FACTOR,SAMPLING_FACTOR,SAMPLING_FACTOR,1), order= 1)
+                    disp_field *= SAMPLING_FACTOR
+                    
+                    D,H,W,C = disp_field.shape
+                    identity = np.meshgrid(np.ones(D)*slice, np.arange(H), np.arange(W), indexing='ij')
+                    warped_seg[slice] = map_coordinates(moving_seg, identity + disp_field.transpose(3,0,1,2), order=0)
+
+            else:
+                with h5py.File(disp_path, "r") as f:
+                    disp_field = f[pair][:,:,:,:]
+                disp_field = ndimage.zoom(disp_field, (SAMPLING_FACTOR,SAMPLING_FACTOR,SAMPLING_FACTOR,1), order= 1)
+                disp_field *= SAMPLING_FACTOR
+                D,H,W,C = disp_field.shape
+                identity = np.meshgrid(np.arange(D), np.arange(H), np.arange(W), indexing='ij')
+                warped_seg = map_coordinates(moving_seg, identity + disp_field.transpose(3,0,1,2), order=0)
+
 
         ## Get the volume labels 
         labels = list(np.unique(fixed_seg))
@@ -77,7 +89,7 @@ def evaluate_ExM(INPUT_PATH,GT_PATH,JSON_PATH,OUTPUT_PATH,SAMPLING_FACTOR, verbo
         for _eval in data['evaluation_methods']:
             _name=_eval['name']
 
-            ### SDlogJ
+            ### SDlogJ (disappled for memory optimized evlauation)
             if 'sdlogj' == _eval['metric']:
                 jac_det = (jacobian_determinant(disp_field[np.newaxis, :, :, :, :].transpose((0,4,1,2,3))) + 3).clip(0.000000001, 1000000000)
                 log_jac_det = np.log(jac_det)
@@ -153,6 +165,7 @@ if __name__=="__main__":
     parser.add_argument("-c","--config", dest="config_path", help="path to config json-File (e.g. '{ Task }_evaluation_config.json')", default='ground-truth/evaluation_config.json') 
     parser.add_argument("-s","--sampling_factor", dest="sampling_factor",help="downsample the segmentation map for faster evaluation",type=float, default=1)
     parser.add_argument("-v","--verbose", dest="verbose", action='store_true', default=True)
+    parser.add_argument("-opt","--optimize", dest="optimize", action='store_true', default=False)
     args= parser.parse_args()
 
-    evaluate_ExM(args.input_path, args.gt_path, args.config_path, args.output_path,args.sampling_factor, args.verbose)
+    evaluate_ExM(args.input_path, args.gt_path, args.config_path, args.output_path,args.sampling_factor,args.optimize,args.verbose)
