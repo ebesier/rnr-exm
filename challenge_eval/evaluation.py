@@ -64,7 +64,7 @@ def evaluate_ExM(INPUT_PATH,GT_PATH,JSON_PATH,OUTPUT_PATH,SAMPLING_FACTOR,memory
                 for slice,chunk in enumerate(list(range(0, fixed_seg.shape[0]*int(1/SAMPLING_FACTOR), int(1/SAMPLING_FACTOR)))):
                     with h5py.File(disp_path, "r") as f:
                         disp_field = f[pair][chunk:chunk+int(1/SAMPLING_FACTOR),:,:,:]
-                    disp_field = ndimage.zoom(disp_field, (SAMPLING_FACTOR,SAMPLING_FACTOR,SAMPLING_FACTOR,1), order= 1)
+                    disp_field = ndimage.zoom(disp_field, (SAMPLING_FACTOR,SAMPLING_FACTOR,SAMPLING_FACTOR,1), order= 1,grid_mode=True,mode='grid-constant')
                     disp_field *= SAMPLING_FACTOR
                     
                     D,H,W,C = disp_field.shape
@@ -74,8 +74,11 @@ def evaluate_ExM(INPUT_PATH,GT_PATH,JSON_PATH,OUTPUT_PATH,SAMPLING_FACTOR,memory
             else:
                 with h5py.File(disp_path, "r") as f:
                     disp_field = f[pair][:,:,:,:]
-                disp_field = ndimage.zoom(disp_field, (SAMPLING_FACTOR,SAMPLING_FACTOR,SAMPLING_FACTOR,1), order= 1)
-                disp_field *= SAMPLING_FACTOR
+                if SAMPLING_FACTOR != 1.0:    
+                    fixed_seg = ndimage.zoom(fixed_seg, SAMPLING_FACTOR, order= 0)
+                    moving_seg = ndimage.zoom(moving_seg, SAMPLING_FACTOR, order= 0)
+                    disp_field = ndimage.zoom(disp_field, (SAMPLING_FACTOR,SAMPLING_FACTOR,SAMPLING_FACTOR,1), order= 1,grid_mode=True,mode='grid-constant' )
+                    disp_field *= SAMPLING_FACTOR
                 D,H,W,C = disp_field.shape
                 identity = np.meshgrid(np.arange(D), np.arange(H), np.arange(W), indexing='ij')
                 warped_seg = map_coordinates(moving_seg, identity + disp_field.transpose(3,0,1,2), order=0)
