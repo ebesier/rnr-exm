@@ -85,9 +85,11 @@ def evaluate_ExM(INPUT_PATH,GT_PATH,JSON_PATH,OUTPUT_PATH,SAMPLING_FACTOR,memory
                 warped_seg = map_coordinates(moving_seg, identity + disp_field.transpose(3,0,1,2), order=0)
                 
         ## select ROI for evaluation
-        fixed_seg = fixed_seg[z_ROI[0][pair][0]:z_ROI[0][pair][1], :, :]
-        warped_seg = warped_seg[z_ROI[0][pair][0]:z_ROI[0][pair][1],  :, :]
-        disp_field = disp_field[z_ROI[0][pair][0]:z_ROI[0][pair][1],  :, :]
+        start = int(z_ROI[0][pair][0] * SAMPLING_FACTOR)
+        stop = int(z_ROI[0][pair][1] * SAMPLING_FACTOR)
+        fixed_seg = fixed_seg[start:stop, :, :]
+        warped_seg = warped_seg[start:stop,  :, :]
+        disp_field = disp_field[start:stop,  :, :, :]
 
 
         ## Get the volume labels 
