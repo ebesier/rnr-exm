@@ -89,8 +89,6 @@ def evaluate_ExM(INPUT_PATH,GT_PATH,JSON_PATH,OUTPUT_PATH,SAMPLING_FACTOR,memory
         stop = int(z_ROI[0][pair][1] * SAMPLING_FACTOR)
         fixed_seg = fixed_seg[start:stop, :, :]
         warped_seg = warped_seg[start:stop,  :, :]
-        disp_field = disp_field[start:stop,  :, :, :]
-
 
         ## Get the volume labels 
         labels = list(np.unique(fixed_seg))
