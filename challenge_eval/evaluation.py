@@ -21,6 +21,7 @@ def evaluate_ExM(INPUT_PATH,GT_PATH,JSON_PATH,OUTPUT_PATH,SAMPLING_FACTOR,memory
     missing_disp = []
     eval_pairs=data['eval_pairs']
     len_pairs=len(eval_pairs)
+    z_ROI = data['z_ROI']
 
     #Check if all participants files are complete beforehand
 
@@ -82,7 +83,12 @@ def evaluate_ExM(INPUT_PATH,GT_PATH,JSON_PATH,OUTPUT_PATH,SAMPLING_FACTOR,memory
                 D,H,W,C = disp_field.shape
                 identity = np.meshgrid(np.arange(D), np.arange(H), np.arange(W), indexing='ij')
                 warped_seg = map_coordinates(moving_seg, identity + disp_field.transpose(3,0,1,2), order=0)
-
+                
+        ## select ROI for evaluation
+        start = int(z_ROI[0][pair][0] * SAMPLING_FACTOR)
+        stop = int(z_ROI[0][pair][1] * SAMPLING_FACTOR)
+        fixed_seg = fixed_seg[start:stop, :, :]
+        warped_seg = warped_seg[start:stop,  :, :]
 
         ## Get the volume labels 
         labels = list(np.unique(fixed_seg))
