@@ -2,7 +2,7 @@ import numpy as np
 import scipy.ndimage
 from evalutils.exceptions import ValidationError
 from scipy.ndimage import map_coordinates
-from mertics import *
+from metrics import *
 
 ##### metrics #####
 def jacobian_determinant(disp):
