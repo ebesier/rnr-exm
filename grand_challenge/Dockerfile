@@ -29,4 +29,4 @@ COPY --chown=evaluator:evaluator ./challenge_eval/*.py /opt/evaluation/
 # https://stackoverflow.com/questions/34324277/how-to-pass-arg-value-to-entrypoint
 # ENV _GT_SEGMENTATION_PATH=${GT_SEGMENTATION_PATH}
 
-ENTRYPOINT python evaluation.py --input /input --data ground-truth --output /output --config ground-truth/config.json --optimize && mv /output/*metrics.json /output/metrics.json
+ENTRYPOINT python evaluation.py --input /input --data ground-truth --output /output --config ground-truth/config.json --sampling_factor 0.5 --optimize && mv /output/*metrics.json /output/metrics.json
