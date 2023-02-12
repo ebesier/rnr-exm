@@ -46,9 +46,9 @@ hf.close()
 ################### Example C. elegans Submission #######################
 
 ## Generate deformation map (replace)
-deformation_pair1 = np.zeros((580,2048,2048,3))
-deformation_pair2 = np.zeros((580,2048,2048,3))
-deformation_pair3 = np.zeros((580,2048,2048,3)) 
+deformation_pair1 = np.zeros((559,2048,2048,3))
+deformation_pair2 = np.zeros((559,2048,2048,3))
+deformation_pair3 = np.zeros((559,2048,2048,3)) 
 
 ## Cast to float32 to reduce file size
 deformation_pair1 = np.float32(deformation_pair1) 
