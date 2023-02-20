@@ -1,3 +1,6 @@
+# Grand Challenge does not accept .json files directly. Before submission, 
+# participants will need to copy and paste the contents of their created .json into a .txt file
+
 {
     "zebrafish": {
         "zebrafish_pair4": {
