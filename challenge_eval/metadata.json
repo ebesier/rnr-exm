@@ -6,7 +6,7 @@
             "number of cores used": 0, 
             "number of GPUs used": 0,
             "Ghz that each processing unit supports": {'core': '0 Ghz', 'GPU': '0 Ghz'},
-            "was the data downsampled before registration? If so, by what factor?": "data was downsampled by a factor of 0.5 before registration",
+            "was the data downsampled before registration? If so, by what factor?": "data was downsampled by a factor of x before registration",
             "model summary": "brief explanation of model"
         }
     },
@@ -17,7 +17,7 @@
             "number of cores used": 0, 
             "number of GPUs used": 0,
             "Ghz that each processing unit supports": {'core': '0 Ghz', 'GPU': '0 Ghz'},
-            "was the data downsampled before registration? If so, by what factor?": "data was downsampled by a factor of 0.5 before registration",
+            "was the data downsampled before registration? If so, by what factor?": "data was downsampled by a factor of x before registration",
             "model summary": "brief explanation of model"
         }
     },
@@ -28,7 +28,7 @@
             "number of cores used": 0, 
             "number of GPUs used": 0,
             "Ghz that each processing unit supports": {'core': '0 Ghz', 'GPU': '0 Ghz'},
-            "was the data downsampled before registration? If so, by what factor?": "data was downsampled by a factor of 0.5 before registration",
+            "was the data downsampled before registration? If so, by what factor?": "data was downsampled by a factor of x before registration",
             "model summary": "brief explanation of model"
         }
     }
