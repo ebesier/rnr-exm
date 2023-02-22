@@ -12,10 +12,10 @@ deformation_pair1 = np.zeros((81,2048,2048,3))
 deformation_pair2 = np.zeros((81,2048,2048,3))
 deformation_pair3 = np.zeros((81,2048,2048,3)) 
 
-## Cast to float32 to reduce file size
-deformation_pair1 = np.float32(deformation_pair1) 
-deformation_pair2 = np.float32(deformation_pair2)
-deformation_pair3 = np.float32(deformation_pair3)
+## Cast to float32 and round to reduce file size
+deformation_pair1 = np.around(np.float32(deformation_pair1), decimals=2)
+deformation_pair2 = np.around(np.float32(deformation_pair2), decimals=2)
+deformation_pair3 = np.around(np.float32(deformation_pair3), decimals=2)
 
 ## Write to .h5
 hf = h5py.File('mouse_test.h5', 'w')
@@ -31,10 +31,10 @@ deformation_pair1 = np.zeros((133,2048,2048,3))
 deformation_pair2 = np.zeros((133,2048,2048,3))
 deformation_pair3 = np.zeros((133,2048,2048,3)) 
 
-## Cast to float32 to reduce file size
-deformation_pair1 = np.float32(deformation_pair1) 
-deformation_pair2 = np.float32(deformation_pair2)
-deformation_pair3 = np.float32(deformation_pair3)
+## Cast to float32 and round to reduce file size
+deformation_pair1 = np.around(np.float32(deformation_pair1), decimals=2)
+deformation_pair2 = np.around(np.float32(deformation_pair2), decimals=2)
+deformation_pair3 = np.around(np.float32(deformation_pair3), decimals=2)
 
 ## Write to .h5
 hf = h5py.File('zebrafish_test.h5', 'w')
@@ -50,10 +50,10 @@ deformation_pair1 = np.zeros((559,2048,2048,3))
 deformation_pair2 = np.zeros((559,2048,2048,3))
 deformation_pair3 = np.zeros((559,2048,2048,3)) 
 
-## Cast to float32 to reduce file size
-deformation_pair1 = np.float32(deformation_pair1) 
-deformation_pair2 = np.float32(deformation_pair2)
-deformation_pair3 = np.float32(deformation_pair3)
+## Cast to float32 and round to reduce file size
+deformation_pair1 = np.around(np.float32(deformation_pair1), decimals=2)
+deformation_pair2 = np.around(np.float32(deformation_pair2), decimals=2)
+deformation_pair3 = np.around(np.float32(deformation_pair3), decimals=2)
 
 ## Write to .h5
 hf = h5py.File('c_elegan_test.h5', 'w')
